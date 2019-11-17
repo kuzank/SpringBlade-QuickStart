@@ -15,7 +15,7 @@
  */
 package org.springblade;
 
-import org.springblade.common.constant.CommonConstant;
+import org.springblade.common.constant.LauncherConstant;
 import org.springblade.core.launch.BladeApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -30,7 +30,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class Application {
 
 	public static void main(String[] args) {
-		BladeApplication.run(CommonConstant.APPLICATION_NAME, Application.class, args);
+		BladeApplication.run(LauncherConstant.APPLICATION_NAME, Application.class, args);
 	}
 
 }
