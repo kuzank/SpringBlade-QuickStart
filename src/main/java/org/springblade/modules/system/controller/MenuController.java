@@ -15,6 +15,7 @@
  */
 package org.springblade.modules.system.controller;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springblade.core.boot.ctrl.BladeController;
@@ -74,7 +75,6 @@ public class MenuController extends BladeController {
 	@ApiOperationSupport(order = 2)
 	@ApiOperation(value = "列表", notes = "传入menu")
 	public R<List<MenuVO>> list(@ApiIgnore @RequestParam Map<String, Object> menu) {
-		@SuppressWarnings("unchecked")
 		List<Menu> list = menuService.list(Condition.getQueryWrapper(menu, Menu.class).lambda().orderByAsc(Menu::getSort));
 		return R.data(MenuWrapper.build().listNodeVO(list));
 	}
