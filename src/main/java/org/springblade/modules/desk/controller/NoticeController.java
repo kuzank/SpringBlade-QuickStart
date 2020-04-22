@@ -15,7 +15,9 @@
  */
 package org.springblade.modules.desk.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.ApiSort;
 import io.swagger.annotations.*;
@@ -25,6 +27,7 @@ import org.springblade.core.boot.ctrl.BladeController;
 import org.springblade.core.mp.support.Condition;
 import org.springblade.core.mp.support.Query;
 import org.springblade.core.tool.api.R;
+import org.springblade.core.tool.utils.DateUtil;
 import org.springblade.core.tool.utils.Func;
 import org.springblade.modules.desk.entity.Notice;
 import org.springblade.modules.desk.service.INoticeService;
@@ -59,6 +62,15 @@ public class NoticeController extends BladeController implements CacheNames {
 	@ApiOperationSupport(order = 1)
 	@ApiOperation(value = "详情", notes = "传入notice")
 	public R<NoticeVO> detail(Notice notice) {
+
+
+		LambdaQueryWrapper<Notice> queryWrapper = Wrappers.<Notice>query().lambda()
+			.gt(Notice::getCreateTime, DateUtil.parse("2020-04-01 00:00:00", DateUtil.PATTERN_DATETIME))
+			.lt(Notice::getCreateTime, DateUtil.parse("2020-04-21 00:00:00", DateUtil.PATTERN_DATETIME));
+
+		List<Notice> list = noticeService.list(queryWrapper);
+
+
 		Notice detail = noticeService.getOne(Condition.getQueryWrapper(notice));
 		return R.data(NoticeWrapper.build().entityVO(detail));
 	}
@@ -115,7 +127,7 @@ public class NoticeController extends BladeController implements CacheNames {
 	@ApiOperationSupport(order = 6)
 	@ApiOperation(value = "逻辑删除", notes = "传入notice")
 	public R remove(@ApiParam(value = "主键集合") @RequestParam String ids) {
-		boolean temp = noticeService.deleteLogic(Func.toIntList(ids));
+		boolean temp = noticeService.deleteLogic(Func.toLongList(ids));
 		return R.status(temp);
 	}
 

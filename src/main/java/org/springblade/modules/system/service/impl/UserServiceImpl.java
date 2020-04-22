@@ -16,22 +16,27 @@
 package org.springblade.modules.system.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
+import lombok.AllArgsConstructor;
 import org.springblade.common.constant.CommonConstant;
 import org.springblade.core.log.exception.ServiceException;
 import org.springblade.core.mp.base.BaseServiceImpl;
-import org.springblade.core.tool.utils.DateUtil;
-import org.springblade.core.tool.utils.DigestUtil;
-import org.springblade.core.tool.utils.Func;
+import org.springblade.core.tool.utils.*;
 import org.springblade.modules.system.entity.User;
 import org.springblade.modules.system.entity.UserInfo;
+import org.springblade.modules.system.excel.UserExcel;
 import org.springblade.modules.system.mapper.UserMapper;
+import org.springblade.modules.system.service.IDeptService;
+import org.springblade.modules.system.service.IPostService;
+import org.springblade.modules.system.service.IRoleService;
 import org.springblade.modules.system.service.IUserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 服务实现类
@@ -39,7 +44,12 @@ import java.util.List;
  * @author Chill
  */
 @Service
+@AllArgsConstructor
 public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implements IUserService {
+
+	private IDeptService deptService;
+	private IPostService postService;
+	private IRoleService roleService;
 
 	@Override
 	public boolean submit(User user) {
@@ -86,7 +96,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 	public boolean grant(String userIds, String roleIds) {
 		User user = new User();
 		user.setRoleId(roleIds);
-		return this.update(user, Wrappers.<User>update().lambda().in(User::getId, Func.toIntList(userIds)));
+		return this.update(user, Wrappers.<User>update().lambda().in(User::getId, Func.toLongList(userIds)));
 	}
 
 	@Override
@@ -94,11 +104,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 		User user = new User();
 		user.setPassword(DigestUtil.encrypt(CommonConstant.DEFAULT_PASSWORD));
 		user.setUpdateTime(DateUtil.now());
-		return this.update(user, Wrappers.<User>update().lambda().in(User::getId, Func.toIntList(userIds)));
+		return this.update(user, Wrappers.<User>update().lambda().in(User::getId, Func.toLongList(userIds)));
 	}
 
 	@Override
-	public boolean updatePassword(Integer userId, String oldPassword, String newPassword, String newPassword1) {
+	public boolean updatePassword(Long userId, String oldPassword, String newPassword, String newPassword1) {
 		User user = getById(userId);
 		if (!newPassword.equals(newPassword1)) {
 			throw new ServiceException("请输入正确的确认密码!");
@@ -117,6 +127,33 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 	@Override
 	public List<String> getDeptName(String deptIds) {
 		return baseMapper.getDeptName(Func.toStrArray(deptIds));
+	}
+
+	@Override
+	public void importUser(List<UserExcel> data) {
+		data.forEach(userExcel -> {
+			User user = Objects.requireNonNull(BeanUtil.copy(userExcel, User.class));
+			// 设置部门ID
+			user.setDeptId(deptService.getDeptIds(userExcel.getTenantId(), userExcel.getDeptName()));
+			// 设置岗位ID
+			user.setPostId(postService.getPostIds(userExcel.getTenantId(), userExcel.getPostName()));
+			// 设置角色ID
+			user.setRoleId(roleService.getRoleIds(userExcel.getTenantId(), userExcel.getRoleName()));
+			// 设置默认密码
+			user.setPassword(DigestUtil.encrypt(CommonConstant.DEFAULT_PASSWORD));
+			this.submit(user);
+		});
+	}
+
+	@Override
+	public List<UserExcel> exportUser(Wrapper<User> queryWrapper) {
+		List<UserExcel> userList = baseMapper.exportUser(queryWrapper);
+		userList.forEach(user -> {
+			user.setRoleName(StringUtil.join(roleService.getRoleNames(user.getRoleId())));
+			user.setDeptName(StringUtil.join(deptService.getDeptNames(user.getDeptId())));
+			user.setPostName(StringUtil.join(postService.getPostNames(user.getPostId())));
+		});
+		return userList;
 	}
 
 }

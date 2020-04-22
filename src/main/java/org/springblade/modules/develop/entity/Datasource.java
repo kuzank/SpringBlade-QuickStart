@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springblade.core.mp.base.BaseEntity;
@@ -41,8 +43,9 @@ public class Datasource extends BaseEntity {
 	 * 主键
 	 */
 	@ApiModelProperty(value = "主键")
-	@TableId(value = "id", type = IdType.AUTO)
-	private Integer id;
+	@TableId(value = "id", type = IdType.ASSIGN_ID)
+	@JsonSerialize(using = ToStringSerializer.class)
+	private Long id;
 
 	/**
 	 * 名称

@@ -27,6 +27,7 @@ import org.springblade.core.secure.constant.SecureConstant;
 import org.springblade.core.secure.exception.SecureException;
 import org.springblade.core.secure.provider.IClientDetails;
 import org.springblade.core.secure.provider.IClientDetailsService;
+import org.springblade.core.tool.constant.RoleConstant;
 import org.springblade.core.tool.utils.*;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -52,7 +53,6 @@ public class SecureUtil {
 	private final static String TENANT_ID = TokenConstant.TENANT_ID;
 	private final static String CLIENT_ID = TokenConstant.CLIENT_ID;
 	private final static Integer AUTH_LENGTH = TokenConstant.AUTH_LENGTH;
-	private final static String BASIC_HEADER_PREFIX_EXT = "Basic%20";
 	private static String BASE64_SECURITY = Base64.getEncoder().encodeToString(TokenConstant.SIGN_KEY.getBytes(Charsets.UTF_8));
 
 	private static IClientDetailsService clientDetailsService;
@@ -95,7 +95,7 @@ public class SecureUtil {
 			return null;
 		}
 		String clientId = Func.toStr(claims.get(SecureUtil.CLIENT_ID));
-		Integer userId = Func.toInt(claims.get(SecureUtil.USER_ID));
+		Long userId = Func.toLong(claims.get(SecureUtil.USER_ID));
 		String tenantId = Func.toStr(claims.get(SecureUtil.TENANT_ID));
 		String roleId = Func.toStr(claims.get(SecureUtil.ROLE_ID));
 		String account = Func.toStr(claims.get(SecureUtil.ACCOUNT));
@@ -112,13 +112,22 @@ public class SecureUtil {
 		return bladeUser;
 	}
 
+	/**
+	 * 是否为超管
+	 *
+	 * @return boolean
+	 */
+	public static boolean isAdministrator() {
+		return StringUtil.containsAny(getUserRole(), RoleConstant.ADMIN);
+	}
+
 
 	/**
 	 * 获取用户id
 	 *
 	 * @return userId
 	 */
-	public static Integer getUserId() {
+	public static Long getUserId() {
 		BladeUser user = getUser();
 		return (null == user) ? -1 : user.getUserId();
 	}
@@ -129,7 +138,7 @@ public class SecureUtil {
 	 * @param request request
 	 * @return userId
 	 */
-	public static Integer getUserId(HttpServletRequest request) {
+	public static Long getUserId(HttpServletRequest request) {
 		BladeUser user = getUser(request);
 		return (null == user) ? -1 : user.getUserId();
 	}
@@ -247,11 +256,16 @@ public class SecureUtil {
 	 */
 	public static Claims getClaims(HttpServletRequest request) {
 		String auth = request.getHeader(SecureUtil.HEADER);
-		if ((auth != null) && (auth.length() > AUTH_LENGTH)) {
+		if (StringUtil.isNotBlank(auth) && auth.length() > AUTH_LENGTH) {
 			String headStr = auth.substring(0, 6).toLowerCase();
 			if (headStr.compareTo(SecureUtil.BEARER) == 0) {
 				auth = auth.substring(7);
 				return SecureUtil.parseJWT(auth);
+			}
+		} else {
+			String parameter = request.getParameter(SecureUtil.HEADER);
+			if (StringUtil.isNotBlank(parameter)) {
+				return SecureUtil.parseJWT(parameter);
 			}
 		}
 		return null;
@@ -380,7 +394,7 @@ public class SecureUtil {
 	public static String[] extractAndDecodeHeader() {
 		// 获取请求头客户端信息
 		String header = Objects.requireNonNull(WebUtil.getRequest()).getHeader(SecureConstant.BASIC_HEADER_KEY);
-		header = Func.toStr(header).replace(BASIC_HEADER_PREFIX_EXT, SecureConstant.BASIC_HEADER_PREFIX);
+		header = Func.toStr(header).replace(SecureConstant.BASIC_HEADER_PREFIX_EXT, SecureConstant.BASIC_HEADER_PREFIX);
 		if (!header.startsWith(SecureConstant.BASIC_HEADER_PREFIX)) {
 			throw new SecureException("No client information in request header");
 		}

@@ -13,54 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springblade.modules.system.service;
+package org.springblade.modules.system.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-import org.springblade.modules.system.entity.Dept;
-import org.springblade.modules.system.vo.DeptVO;
+import org.springblade.modules.system.entity.Post;
+import org.springblade.modules.system.vo.PostVO;
 
 import java.util.List;
 
 /**
- * 服务类
+ * 岗位表 Mapper 接口
  *
  * @author Chill
  */
-public interface IDeptService extends IService<Dept> {
+public interface PostMapper extends BaseMapper<Post> {
 
 	/**
 	 * 自定义分页
 	 *
 	 * @param page
-	 * @param dept
+	 * @param post
 	 * @return
 	 */
-	IPage<DeptVO> selectDeptPage(IPage<DeptVO> page, DeptVO dept);
+	List<PostVO> selectPostPage(IPage page, PostVO post);
 
 	/**
-	 * 树形结构
+	 * 获取岗位名
 	 *
-	 * @param tenantId
+	 * @param ids
 	 * @return
 	 */
-	List<DeptVO> tree(String tenantId);
-
-	/**
-	 * 获取部门ID
-	 *
-	 * @param tenantId
-	 * @param deptNames
-	 * @return
-	 */
-	String getDeptIds(String tenantId, String deptNames);
-
-	/**
-	 * 获取部门名
-	 *
-	 * @param deptIds
-	 * @return
-	 */
-	List<String> getDeptNames(String deptIds);
+	List<String> getPostNames(Long[] ids);
 
 }

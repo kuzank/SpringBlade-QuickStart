@@ -13,59 +13,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springblade.modules.system.vo;
+package org.springblade.modules.system.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springblade.core.tool.node.INode;
-import org.springblade.modules.system.entity.Role;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springblade.core.mp.base.TenantEntity;
 
 /**
- * 视图实体类
+ * 岗位表实体类
  *
  * @author Chill
  */
 @Data
+@TableName("blade_post")
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "RoleVO对象", description = "RoleVO对象")
-public class RoleVO extends Role implements INode {
+@ApiModel(value = "Post对象", description = "岗位表")
+public class Post extends TenantEntity {
+
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 主键ID
+	 * 主键id
 	 */
+	@ApiModelProperty(value = "主键")
+	@TableId(value = "id", type = IdType.ASSIGN_ID)
 	@JsonSerialize(using = ToStringSerializer.class)
 	private Long id;
 
 	/**
-	 * 父节点ID
+	 * 类型
 	 */
-	@JsonSerialize(using = ToStringSerializer.class)
-	private Long parentId;
-
+	@ApiModelProperty(value = "类型")
+	private Integer category;
 	/**
-	 * 子孙节点
+	 * 岗位编号
 	 */
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	private List<INode> children;
-
-	@Override
-	public List<INode> getChildren() {
-		if (this.children == null) {
-			this.children = new ArrayList<>();
-		}
-		return this.children;
-	}
-
+	@ApiModelProperty(value = "岗位编号")
+	private String postCode;
 	/**
-	 * 上级角色
+	 * 岗位名称
 	 */
-	private String parentName;
+	@ApiModelProperty(value = "岗位名称")
+	private String postName;
+	/**
+	 * 岗位排序
+	 */
+	@ApiModelProperty(value = "岗位排序")
+	private Integer sort;
+	/**
+	 * 岗位描述
+	 */
+	@ApiModelProperty(value = "岗位描述")
+	private String remark;
+
+
 }

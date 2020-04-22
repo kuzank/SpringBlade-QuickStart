@@ -67,7 +67,7 @@ mybatis-plus:
 swagger:
   title: SpringBlade 接口文档系统
   description: SpringBlade 接口文档系统
-  version: 2.6.2
+  version: 2.7.0
   license: Powered By SpringBlade
   licenseUrl: https://bladex.vip
   terms-of-service-url: https://bladex.vip
@@ -78,7 +78,7 @@ swagger:
 
 #oss配置
 oss:
-  enable: true
+  enabled: true
   name: qiniu
   tenant-mode: true
   endpoint: http://prt1thnw3.bkt.clouddn.com
@@ -89,13 +89,12 @@ oss:
 #blade配置
 blade:
   xss:
-    enable: true
+    enabled: true
     skip-url:
       - /blade-test/**
   secure:
-    url:
-      exclude-patterns:
-        - /blade-test/**
+    skip-url:
+      - /blade-test/**
     client:
       - client-id: sword
         path-patterns:

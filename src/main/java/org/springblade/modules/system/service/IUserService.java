@@ -16,10 +16,12 @@
 package org.springblade.modules.system.service;
 
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springblade.core.mp.base.BaseService;
 import org.springblade.modules.system.entity.User;
 import org.springblade.modules.system.entity.UserInfo;
+import org.springblade.modules.system.excel.UserExcel;
 
 import java.util.List;
 
@@ -90,7 +92,7 @@ public interface IUserService extends BaseService<User> {
 	 * @param newPassword1
 	 * @return
 	 */
-	boolean updatePassword(Integer userId, String oldPassword, String newPassword, String newPassword1);
+	boolean updatePassword(Long userId, String oldPassword, String newPassword, String newPassword1);
 
 	/**
 	 * 获取角色名
@@ -107,4 +109,20 @@ public interface IUserService extends BaseService<User> {
 	 * @return
 	 */
 	List<String> getDeptName(String deptIds);
+
+	/**
+	 * 导入用户数据
+	 *
+	 * @param data
+	 * @return
+	 */
+	void importUser(List<UserExcel> data);
+
+	/**
+	 * 获取导出用户数据
+	 *
+	 * @param queryWrapper
+	 * @return
+	 */
+	List<UserExcel> exportUser(Wrapper<User> queryWrapper);
 }

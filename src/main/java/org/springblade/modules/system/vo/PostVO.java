@@ -13,38 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springblade.common.constant;
+package org.springblade.modules.system.vo;
+
+import io.swagger.annotations.ApiModel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.springblade.modules.system.entity.Post;
 
 /**
- * 通用常量
+ * 岗位表视图实体类
  *
  * @author Chill
  */
-public interface CommonConstant {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ApiModel(value = "PostVO对象", description = "岗位表")
+public class PostVO extends Post {
+	private static final long serialVersionUID = 1L;
 
 	/**
-	 * sword 系统名
+	 * 岗位分类名
 	 */
-	String SWORD_NAME = "sword";
-
-	/**
-	 * saber 系统名
-	 */
-	String SABER_NAME = "saber";
-
-	/**
-	 * 顶级父节点id
-	 */
-	Long TOP_PARENT_ID = 0L;
-
-	/**
-	 * 顶级父节点名称
-	 */
-	String TOP_PARENT_NAME = "顶级";
-
-	/**
-	 * 默认密码
-	 */
-	String DEFAULT_PASSWORD = "123456";
+	private String categoryName;
 
 }
