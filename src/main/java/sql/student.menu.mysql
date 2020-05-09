@@ -1,0 +1,10 @@
+INSERT INTO `blade_menu`(`id`,`parent_id`, `code`, `name`, `alias`, `path`, `source`, `sort`, `category`, `action`, `is_open`, `remark`, `is_deleted`)
+VALUES (1123598812738675202, 0, 'student', '', 'menu', '/desk/student', NULL, 1, 1, 0, 1, NULL, 0);
+INSERT INTO `blade_menu`(`id`,`parent_id`, `code`, `name`, `alias`, `path`, `source`, `sort`, `category`, `action`, `is_open`, `remark`, `is_deleted`)
+VALUES (1123598812738675203, 1123598812738675202, 'student_add', '新增', 'add', '/desk/student/add', 'plus', 1, 2, 1, 1, NULL, 0);
+INSERT INTO `blade_menu`(`id`,`parent_id`, `code`, `name`, `alias`, `path`, `source`, `sort`, `category`, `action`, `is_open`, `remark`, `is_deleted`)
+VALUES (1123598812738675204, 1123598812738675202, 'student_edit', '修改', 'edit', '/desk/student/edit', 'form', 2, 2, 1, 2, NULL, 0);
+INSERT INTO `blade_menu`(`id`,`parent_id`, `code`, `name`, `alias`, `path`, `source`, `sort`, `category`, `action`, `is_open`, `remark`, `is_deleted`)
+VALUES (1123598812738675205, 1123598812738675202, 'student_delete', '删除', 'delete', '/api/blade-desk/student/remove', 'delete', 3, 2, 1, 3, NULL, 0);
+INSERT INTO `blade_menu`(`id`,`parent_id`, `code`, `name`, `alias`, `path`, `source`, `sort`, `category`, `action`, `is_open`, `remark`, `is_deleted`)
+VALUES (1123598812738675206, 1123598812738675202, 'student_view', '查看', 'view', '/desk/student/view', 'file-text', 4, 2, 1, 2, NULL, 0);
